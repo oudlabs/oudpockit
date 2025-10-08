@@ -26,17 +26,26 @@ In additon to the above requirements, the kit requires passwordless sudo.  The s
 * Updating the hostname for some demonstrations to use fully qualified hostname
 * Setting up operating system (OS) service management for reboot after OS reboot
 
-Enabling passwordless sudo configuration can be accomplished by adding a line to the /etc/sudoers file for the runtime user of your Linux host similar to the follownig:
-ouduser   ALL=(ALL)   NOPASSWD: ALL
+Enabling passwordless sudo configuration can be accomplished by adding a line to the /etc/sudoers file for the runtime user of your Linux host similar to the follownig:  
+    ouduser   ALL=(ALL)   NOPASSWD: ALL  
 
-One of the scripts included with the OUD POC Kit strealines creation of Oracle Cloud Infrastructure (OCI) compute for demonstration use cases.
-Here is a sample invocation for launching a compute instance named node1 in the us-phoenix-1 region that will have a public IP address, an AMD-E5 processor, 32GB of RAM, 200GB boot volume storage, will run Oracle Linux 9 and create the /u01 base directory for OUD POC Kit demonstrations.
+One of the scripts included with the OUD POC Kit strealines creation of Oracle Cloud Infrastructure (OCI) compute for demonstration use cases. This script is just a wrapper to the OCI command line interface. Directions for downloading and installing the OCI command line tool at the OCI Quickstart Guide at <https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm>.  The manage_oci.sh works on MacOS and Linux systems.
 
-manage_oci.sh launch --name node1 --compartment <ocid> --region us-phoenix-1 --pubip --role ds --ad uYkY:PHX-AD-1 --subnet <ocid> --arch amd-e5 --cores 1 --mem 32 --storage 200 --os ol9 --base /u01
+The following sample invocation shows how to launch a compute instance named node1 in the us-phoenix-1 region of a specific compartment that will have a public IP address, an AMD-E5 processor, 32GB of RAM, 200GB boot volume storage, will run Oracle Linux 9 and create the /u01 base directory for OUD POC Kit demonstrations.  
 
-The following sample invocation lists all compute instances in the specified compartment and region:
+    manage_oci.sh launch --name node1 --compartment <ocid> --region us-phoenix-1 --pubip --role ds --ad uYkY:PHX-AD-1 --subnet <ocid> --arch amd-e5 --cores 1 --mem 32 --storage 200 --os ol9 --base /u01  
 
+The following sample invocation terminates the previously created compute instance named node 1:
 
+    manage_oci.sh terminate --name amdtest --compartment <ocid> --region us-phoenix-1  
+
+The following sample invocation shows the state and shape of all compute instances in the us-phoenix-1 region of the specified OCI compartment:  
+
+    manage_oci.sh list --compartment <ocid> --region us-phoenix-1  
+
+The following sample invocation shows the private and public IP addresses of each compute instances in the us-phoenix-1 region of the specified OCI compartment:  
+
+    manage_oci.sh list net --compartment <ocid> --region us-phoenix-1  
 
 
 ## Installation
@@ -44,7 +53,40 @@ The following sample invocation lists all compute instances in the specified com
 At a minimum, you will need a copy of this kit, JDK 21 (or 17), the OUD 14c software.
 Some demonstrations require additional software that may be available from the operating
 system such as python3-ldap, haproxy, git, ... etc.  These will be installed as part of 
-the respective demonstration script.
+the respective demonstration script.  Here's the high level setup flow.
+
+1. Setup a Linux host with at least 32GB of RAM and 100GB of storage  
+
+2. Set the hostname to the fully qualified domain name and make sure that the fully qualified host name is in the /etc/hosts entry for the local IP address:  
+
+    $ sudo hostnamectl set-hostname $(hostname -f)  
+    $ grep $(hostname -f) /etc/hosts  
+    10.0.0.18 poc.example.com poc  
+
+3. Make base and bits directories if they don't already exist:  
+
+    $ sudo mkdir -p /u01/bits  
+    $ sudo chown -R opc:opc /u01  
+
+4. Download the requisite JDK 21 (or 17), OUD 14c, and OUD POC Kit software to the bits directory (/u01/bits) of the host
+Download JDK 21 comrpressed archive (jdk-21_linux-x64_bin.tar.gz) from <https://www.oracle.com/java/technologies/downloads/#java21>
+
+4. Download the OUD 14c software from <https://www.oracle.com/security/identity-management/directory-services/>
+
+5. Download the Fusion Middlware Infrastructure 14c software from 
+
+
+Search on “Oracle Fusion Middleware 14c Infrastructure”
+Add “REL: Oracle Fusion Middleware 14c Infrastructure 14.2.1.0.0” to cart
+Search on “DLP: Oracle Unified Directory 14.1.2.1.0”
+Add “DLP: Oracle Unified Directory 14.1.2.1.0” to cart
+Click on “Continue”
+Agree to license terms and click "Continue”
+Click on checkbox next to and select Linux x86-64 platform of the following and click "Continue"
+Click on the following two ZIP files to download respective software:
+V1048467-01.zip – Oracle Unified Directory 14.1.2.1.0
+V1045135-01.zip - Oracle Fusion Middleware Infrastructure 14.1.2.0.0
+
 
 1. JDK 1.8
     1. Go to the JDK 8 download page at 
