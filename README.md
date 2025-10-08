@@ -59,71 +59,70 @@ the respective demonstration script.  Here's the high level setup flow.
 
 2. Set the hostname to the fully qualified domain name and make sure that the fully qualified host name is in the /etc/hosts entry for the local IP address:  
 
-    $ sudo hostnamectl set-hostname $(hostname -f)  
-    $ grep $(hostname -f) /etc/hosts  
-    10.0.0.18 poc.example.com poc  
+        sudo hostnamectl set-hostname $(hostname -f)  
+        grep $(hostname -f) /etc/hosts  
+        10.0.0.18 poc.example.com poc  
 
 3. Make base and bits directories if they don't already exist:  
 
-    $ sudo mkdir -p /u01/bits  
-    $ sudo chown -R opc:opc /u01  
+        sudo mkdir -p /u01/bits  
+        sudo chown -R opc:opc /u01  
 
-4. Download the requisite JDK 21 (or 17), OUD 14c, and OUD POC Kit software to the bits directory (/u01/bits) of the host
-Download JDK 21 comrpressed archive (jdk-21_linux-x64_bin.tar.gz) from <https://www.oracle.com/java/technologies/downloads/#java21>
+4. Download the requisite JDK 21 (or 17) and put into the bits directory (/u01/bits)    
 
-4. Download the OUD 14c software from <https://www.oracle.com/security/identity-management/directory-services/>
+     * Download JDK 21 comrpressed archive (jdk-21_linux-x64_bin.tar.gz) from <https://www.oracle.com/java/technologies/downloads/#java21>  
 
-5. Download the Fusion Middlware Infrastructure 14c software from 
+5. Download the OUD 14c and Fusion Middleware Infrastructure 14c software with the following and put the downloads into the bits directory (/u01/bits):  
 
+   a. Login to <https://edelivery.oracle.com/>  
 
-Search on “Oracle Fusion Middleware 14c Infrastructure”
-Add “REL: Oracle Fusion Middleware 14c Infrastructure 14.2.1.0.0” to cart
-Search on “DLP: Oracle Unified Directory 14.1.2.1.0”
-Add “DLP: Oracle Unified Directory 14.1.2.1.0” to cart
-Click on “Continue”
-Agree to license terms and click "Continue”
-Click on checkbox next to and select Linux x86-64 platform of the following and click "Continue"
-Click on the following two ZIP files to download respective software:
-V1048467-01.zip – Oracle Unified Directory 14.1.2.1.0
-V1045135-01.zip - Oracle Fusion Middleware Infrastructure 14.1.2.0.0
+   b. Search on “Oracle Fusion Middleware 14c Infrastructure”  
 
+   c. Add “REL: Oracle Fusion Middleware 14c Infrastructure 14.2.1.0.0” to cart  
 
-1. JDK 1.8
-    1. Go to the JDK 8 download page at 
-        https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-    2. Download the tar version of the jdk-8u361-linux-x64.tar.gz
+   d. Search on “DLP: Oracle Unified Directory 14.1.2.1.0”  
 
-2. Download Oracle Unified Directory (OUD) and Fusion Middleware
-   Infrastructure (FMW)
-    1. Go to https://eDelivery.oracle.com
-    2. Login
-    3. Search on “Oracle Fusion Middleware 12c Infrastructure”
-    4. Add “Oracle Fusion Middleware 12c Infrastructure 12.2.1.4.0” to
-       cart
-    5. Search on Oracle Directory Services Plus
-    6. Add "Oracle Directory Services Plus 12.2.1.4.0 ( Oracle Directory
-        Services Plus )” to cart
-    7. Click on “Checkout”
-    8. Select Platform for OUD and FMW 12c
-    9. Click “Next”
-    10. Click on the following two ZIP files to download respective
-        software:
-        - V983368-01.zip - Oracle Fusion Middleware 12c (12.2.1.4.0)
-             Infrastructure
-        - V983402-01.zip - Oracle Fusion Middleware 12c (12.2.1.4.0)
-             Unified Directory
-3. [Optional for EUS Demo] Oracle Database 19c
-    1. Go to https://eDelivery.oracle.com
-    2. Login
-    3. Search on “Oracle Database Enterprise Edition”
-    4. Add “DLP:Oracle Database Enterprise Edition 19.3.0.0.0” to cart
-    5. Click on “Checkout”
-    6. Select Platform
-    7. Click “Next”
-    8. Click on the following ZIP file to download:
-        - V982063-01.zip - Oracle Database 19.3.0.0.0 for Linux x86-64
+   e. Add “DLP: Oracle Unified Directory 14.1.2.1.0” to cart  
+
+   f. Click on “Continue”  
+
+   g. Agree to license terms and click "Continue”  
+
+   h. Click on checkbox next to and select Linux x86-64 platform of the following and click "Continue"  
+
+   i. Click on the following two ZIP files to download respective software:  
+     * V1048467-01.zip – Oracle Unified Directory 14.1.2.1.0     
+     * V1045135-01.zip - Oracle Fusion Middleware Infrastructure 14.1.2.0.0  
+
+   j. Download the latest patches and put the zip files in bits directory (/u01/bits)  
+     * <https://updates.oracle.com/download/37376076.html> (p37376076_141200_Generic.zip)  
+     * <https://updates.oracle.com/download/38015961.html> (p38015961_141200_Generic.zip)  
+     * <https://updates.oracle.com/download/38032733.html> (p38032733_141210_Generic.zip)  
+     * <https://updates.oracle.com/download/38130086.html> (p38130086_141200_Generic.zip)  
+   
+
+6. Extract the OUD POC Kit into the base directory (/u01)
+
+       unzip -d /u01/. /u01/bits/oudpockit-*.zip  
 
 
+
+[Optional] If you are doing demonstrations involving the Oracle database, you will need to download the Oracle Database 19c and put it into the /u01/bits directory.
+
+   a. Login to <https://edelivery.oracle.com/>  
+
+   b. Search on “Oracle Database Enterprise Edition”  
+
+   c. Add “DLP:Oracle Database Enterprise Edition 19.3.0.0.0” to cart  
+
+   d. Click on “Continue”  
+
+   e. Agree to license terms and click "Continue”  
+
+   f. Click on checkbox next to and select Linux x86-64 platform of the following and click "Continue"  
+
+   g. Click on the following ZIP file to download respective software:  
+          * V982063-01.zip - Oracle Database 19.3.0.0.0 for Linux x86-64 
 
 
 ## Usage
