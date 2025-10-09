@@ -223,7 +223,7 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 
 ### Example 6: Setup load balancing proxy  
 
-    ./manage_proxy.sh setup -n enterprise --suffix "dc=example,dc=com" --nodes "$(hostname -f):1389:1636,$(hostname -f):2389:2636"  
+    ./manage_proxy.sh setup -n inetorg --suffix "dc=example,dc=com" --nodes "$(hostname -f):1389:1636,$(hostname -f):2389:2636"  
 
 ### Stop/Start OUD directory proxy server instances on local host:  
 
@@ -232,13 +232,13 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 
 ### Example 7: Demo LDAP Searches  
 
-    ./demo_search.sh -n enterprise  
-    ./demo_search.sh -n enterprise -p 1390  
+    ./demo_search.sh -n inetorg  
+    ./demo_search.sh -n inetorg -p 1390  
 
 ### Example 8: Demo REST/SCIM  
 
-    ./demo_rest.sh -n enterprise  
-    ./demo_rest.sh -n enterprise -p 1433  
+    ./demo_rest.sh -n inetorg  
+    ./demo_rest.sh -n inetorg -p 1433  
 
 
 ### Example 9: Deinstall OUD proxy  
@@ -279,7 +279,7 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 
 #### Create info file based on make-ldif template to inform the load generations DIT, user, group, and group membership spans  
 
-    ./manage_slamd.sh mksvcinfo -n enterprise
+    ./manage_slamd.sh mksvcinfo -n inetorg
 
 #### Start a performance analysis baseline campaign  
 
