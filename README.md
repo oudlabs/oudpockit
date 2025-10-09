@@ -178,8 +178,9 @@ Most scripts include usage that can be seen by running the script with the --hel
 
 ## Use Cases
 
+For all of the following examples, the scripts are located in /u01 or whatever base directory that you specify for your host.  
+
 ### Example 1: Extract and install OUD
-cd "${curdir}"
 ./manage_install.sh install oud 
 
 ### Example 2: Setup administrative web service (OUDSM)
@@ -194,10 +195,10 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 ./manage_data.sh genall -n enterprise -N 10000 
 
 ### Example 4: Setup first OUD instance
-./manage_oud.sh setup --suffix "${suffix}" --batch ${samples}/my.batch --schema ${samples}/my.schema --data ${curdir}/cfg/enterprise.ldif 
+./manage_oud.sh setup --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --data /u01/cfg/enterprise.ldif 
 
 ### Example 5: Setup second OUD instance
-./manage_oud.sh setup --pnum 2 --suffix "${suffix}" --batch ${samples}/my.batch --schema ${samples}/my.schema --supplier ${localHost}:1444 
+./manage_oud.sh setup --pnum 2 --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --supplier $(hostname -f):1444 
 
 ### Show replication status of OUD topology
 ./manage_oud.sh rstatus  [--advanced] [--disp <view>]
@@ -210,7 +211,7 @@ Note that setup of the OUDSM is not required to setup OUD instances.
     ./manage_init.sh enable
 
 ### Example 6: Setup load balancing proxy
-./manage_proxy.sh setup -n enterprise --suffix "${suffix}" --nodes "${localHost}:1389:1636,${localHost}:2389:2636" 
+./manage_proxy.sh setup -n enterprise --suffix "dc=example,dc=com" --nodes "$(hostname -f):1389:1636,$(hostname -f):2389:2636" 
 
 ### Stop/Start OUD directory proxy server instances on local host:
     ./manage_proxy.sh stop
@@ -229,24 +230,24 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 ./manage_proxy.sh deinstall
 
 ### Example 10: Demo bulk load CSV data into OUD
-./manage_csv2ldif.sh --overwrite --csvFile ${samples}/test.csv --suffix "ou=People,${suffix}" 
-./demo_bulkloadldif.sh --nodupcheck -f ${samples}/test.ldif -h ${localHost} -p 1389 -j ${curdir}/cfg/...pw 
+./manage_csv2ldif.sh --overwrite --csvFile samples/test.csv --suffix "ou=People,dc=example,dc=com" 
+./demo_bulkloadldif.sh --nodupcheck -f samples/test.ldif -h $(hostname -f) -p 1389 -j /u01/cfg/...pw 
 
 ### Example 11: Prepare custom schema for OUD
 #### Prepare an individual schema file
-./demo_prepschema.sh --schema ${samples}/das.schema
+./demo_prepschema.sh --schema samples/das.schema
 
 #### Prepare all schema files in a specific directory
-./demo_prepschema.sh --schemadir ${curdir}/var/ds1/config/schema
+./demo_prepschema.sh --schemadir /u01/var/ds1/config/schema
 
 #### Prepare the schema from a source directory
 ./demo_prepschema.sh -h $(hostname -f) -p 2389
 
 ### Example 12: Demonstrate backup/restore/export/import
-./manage_oud.sh backup --backupdir ${tmpdir}/oud${pnum}-${now}
-./manage_oud.sh restore --backupdir ${tmpdir}/oud${pnum}-${now}
-./manage_oud.sh export --ldiffile ${tmpdir}/oud${pnum}-${now}.ldif
-./manage_oud.sh import --ldiffile ${tmpdir}/oud${pnum}-${now}.ldif
+./manage_oud.sh backup --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')
+./manage_oud.sh restore --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')
+./manage_oud.sh export --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif
+./manage_oud.sh import --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif
 
 ### Example 13: Setup SLAMD for load generation testing
 #### Setup SLAMD server, client, and client monitor
@@ -307,7 +308,7 @@ Requisite: If installed on RedHat/Oracle Linux, the following packages are requi
 ./manage_oud.sh deinstall
 
 #### Copy make-ldif template and custom schema to config directory
-cp ${samples}/ad.* ${cfgdir}
+cp samples/ad.* /u01/cfg
 
 #### Generate AD data using the make-ldif template
 ./manage_data.sh genall -n ad --dnfilter cn=user --rm
@@ -318,28 +319,28 @@ cp ${samples}/ad.* ${cfgdir}
 ### Example 16: Demonstrate how to map uid to samAccountName
 #### Setup the OUD instance
 ./manage_oud.sh deinstall
-./manage_oud.sh setup --pnum 1 -n ad --batch ${samples}/map_uid2samaccountname.batch
+./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname.batch
 
 #### Show that uid is returned with value of samAccountName but samAccountName is not returned
-${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(cn=user1)' uid samAccountName
-${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(uid=user1)' uid samAccountName
-${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(samAccountName=user1)' uid samAccountName
+/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName
+/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName
+/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName
 
 ### Example 17: Demonstrate how to map uid to samAccountName
 #### Setup the OUD instance
 ./manage_oud.sh deinstall
-./manage_oud.sh setup --pnum 1 -n ad --batch ${samples}/map_uid2samaccountname_and_add_samAccountName.batch
+./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname_and_add_samAccountName.batch
 
 #### Show that uid and samAccountName are returned where uid has the value of samAccountName
-${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(cn=user1)' uid samAccountName
-${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(uid=user1)' uid samAccountName
-${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(samAccountName=user1)' uid samAccountName
+/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName
+/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName
+/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName
 
 ### Example 18: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade
-${oudmwdir}/demo_oud14c_upgrade.sh existinghome
+/u01/mw_oud14c/demo_oud14c_upgrade.sh existinghome
 
 ### Example 19: Demonstrate swing migration of OUD 12cPS4 to OUD 14c
-${oudmwdir}/demo_oud14c_upgrade.sh swing
+/u01/mw_oud14c/demo_oud14c_upgrade.sh swing
 
 ### Example 20: Demonstrate Oracle database name (net services/TNS/Onames) resolution
 ./demo_tns.sh
@@ -352,7 +353,7 @@ sudo firewall-cmd --permanent --zone=public --add-port=10989/tcp
 sudo firewall-cmd --reload
 
 #### To expand the TNS topology to another host
-#./manage_tns.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989
+./manage_tns.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989
 
 ### Example 21: Demonstrate Enterprise User Security architecture
 ./demo_eus.sh
