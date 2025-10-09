@@ -198,15 +198,15 @@ Note that setup of the OUDSM is not required to setup OUD instances.
     ./manage_oudsm.sh start  
 
 ### Example 3: Generate 10,000 user entries  
-    ./manage_data.sh genall -n enterprise -N 10000   
+    ./manage_data.sh genall -n inetorg -N 10000   
 
 ### Example 4: Setup first OUD instance  
 
-    ./manage_oud.sh setup --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --data /u01/cfg/enterprise.ldif  
+    ./manage_oud.sh setup --pnum 1 -n inetorg   
 
 ### Example 5: Setup second OUD instance  
 
-    ./manage_oud.sh setup --pnum 2 --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --supplier $(hostname -f):1444  
+    ./manage_oud.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1444  
 
 ### Show replication status of OUD topology  
 
