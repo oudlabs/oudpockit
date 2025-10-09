@@ -392,7 +392,19 @@ Requisite: If installed on RedHat/Oracle Linux, the following packages are requi
 
 ### Example 18: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade  
 
-    /u01/mw_oud14c/demo_oud14c_upgrade.sh existinghome  
+Deinstall all existing instances and remove bits from /u01/bits  
+
+    cd /u01  
+    mv bits bits.orig  
+    mkdir -p bits/12c bits/14c  
+
+Put JDK 1.8, OUD 12cPS4 and OUD 12c patches in /u01/bits/12c  
+
+Put JDK 21, OUD 14c and OUD 14c patches in /u01/bits/14c  
+
+Then, run the following demo:  
+
+    ./demo_oud14c_upgrade.sh existinghome  
 
 ### Example 19: Demonstrate swing migration of OUD 12cPS4 to OUD 14c  
 
