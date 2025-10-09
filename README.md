@@ -238,137 +238,176 @@ Note that setup of the OUDSM is not required to setup OUD instances.
     ./demo_rest.sh -n enterprise -p 1433  
 
 
-### Example 9: Deinstall OUD proxy
-./manage_proxy.sh deinstall
+### Example 9: Deinstall OUD proxy  
 
-### Example 10: Demo bulk load CSV data into OUD
-./manage_csv2ldif.sh --overwrite --csvFile samples/test.csv --suffix "ou=People,dc=example,dc=com" 
-./demo_bulkloadldif.sh --nodupcheck -f samples/test.ldif -h $(hostname -f) -p 1389 -j /u01/cfg/...pw 
+    ./manage_proxy.sh deinstall  
 
-### Example 11: Prepare custom schema for OUD
-#### Prepare an individual schema file
-./demo_prepschema.sh --schema samples/das.schema
+### Example 10: Demo bulk load CSV data into OUD  
 
-#### Prepare all schema files in a specific directory
-./demo_prepschema.sh --schemadir /u01/var/ds1/config/schema
+    ./manage_csv2ldif.sh --overwrite --csvFile samples/test.csv --suffix "ou=People,dc=example,dc=com"  
+    ./demo_bulkloadldif.sh --nodupcheck -f samples/test.ldif -h $(hostname -f) -p 1389 -j /u01/cfg/...pw  
 
-#### Prepare the schema from a source directory
-./demo_prepschema.sh -h $(hostname -f) -p 2389
+### Example 11: Prepare custom schema for OUD  
+
+#### Prepare an individual schema file  
+
+    ./demo_prepschema.sh --schema samples/das.schema  
+
+#### Prepare all schema files in a specific directory  
+
+    ./demo_prepschema.sh --schemadir /u01/var/ds1/config/schema  
+
+#### Prepare the schema from a source directory  
+
+    ./demo_prepschema.sh -h $(hostname -f) -p 2389
 
 ### Example 12: Demonstrate backup/restore/export/import
-./manage_oud.sh backup --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')
-./manage_oud.sh restore --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')
-./manage_oud.sh export --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif
-./manage_oud.sh import --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif
 
-### Example 13: Setup SLAMD for load generation testing
-#### Setup SLAMD server, client, and client monitor
-./manage_slamd.sh setup slamd
+    ./manage_oud.sh backup --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')  
+    ./manage_oud.sh restore --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')  
+    ./manage_oud.sh export --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif  
+    ./manage_oud.sh import --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif  
 
-#### Create info file based on make-ldif template to inform the load generations DIT, user, group, and group membership spans
-./manage_slamd.sh mksvcinfo -n enterprise
+### Example 13: Setup SLAMD for load generation testing  
 
-#### Start a performance analysis baseline campaign
-./manage_slamd.sh brun --campaign baseline -h $(hostname -f) -p 1389 -C 3
+#### Setup SLAMD server, client, and client monitor  
 
-#### Check the status of running jobs
-./manage_slamd.sh blist
+    ./manage_slamd.sh setup slamd  
 
-#### Wait for a while for some data to be processed
-sleep 600
+#### Create info file based on make-ldif template to inform the load generations DIT, user, group, and group membership spans  
 
-#### Generate reports of the completed jobs
-./manage_slamd.sh breports
+    ./manage_slamd.sh mksvcinfo -n enterprise
 
-#### Display the job results summary for the latest campaign
-./manage_slamd.sh bsummary
+#### Start a performance analysis baseline campaign  
 
-### Example 14: Demonstrate ODSEE to OUD migration with OUD Replication Gateway
-Requisite: If installed on RedHat/Oracle Linux, the following packages are required for ODSEE:
+    ./manage_slamd.sh brun --campaign baseline -h $(hostname -f) -p 1389 -C 3  
+
+#### Check the status of running jobs  
+
+    ./manage_slamd.sh blist
+
+#### Wait for a while for some data to be processed  
+
+    sleep 600
+
+#### Generate reports of the completed jobs  
+
+    ./manage_slamd.sh breports
+
+#### Display the job results summary for the latest campaign  
+
+    ./manage_slamd.sh bsummary
+
+### Example 14: Demonstrate ODSEE to OUD migration with OUD Replication Gateway  
+
+Requisite: If installed on RedHat/Oracle Linux, the following packages are required for ODSEE:  
+
 ### Install RedHat/Oracle Linux 7 requisites  
 
     sudo -n yum install -y ksh unzip libzip libzip.i686 libgcc.i686 glibc-devel.i686 gcc gcc-c++ perl bc elfutils-libelf-devel glibc-devel libaio-devel libstdc++-devel libstdc++-devel libaio-devel sysstat binutils unixODBC unixODBC-devel compat-db47 compat-libcap1.x86_64 compat-libstdc++-33.x86_64 compat-libstdc++-33.i686 libstdc++.i686 compat-libcap1 compat-libstdc++-33
 
-   #### Install OUD and gen data
-   ./manage_data.sh genall -n inetorg --rm
+   #### Install OUD and gen data  
 
-   #### Setup ODSEE topology
-   ./manage_odsee.sh setup --pnum 1 -n inetorg
-   ./manage_odsee.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1393
-   ./manage_odsee.sh mod --pnum 1
+    ./manage_data.sh genall -n inetorg --rm
 
-   #### Setup OUD topology
-   ./manage_oud.sh setup --pnum 1 -n inetorg 
-   ./manage_oud.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1444:1989
+   #### Setup ODSEE topology  
 
-   #### Setup replication gateway
-   ./manage_replgw.sh setup
+    ./manage_odsee.sh setup --pnum 1 -n inetorg  
+    ./manage_odsee.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1393  
+    ./manage_odsee.sh mod --pnum 1  
 
-   #### Initialize OUD from ODSEE data
-   ./manage_replgw.sh export
-   ./manage_replgw.sh init
-   ./manage_replgw.sh rstatus
-   ./manage_replgw.sh test
+   #### Setup OUD topology  
 
-   #### Remove replication gateway and ODSEE instances
-   ./manage_replgw.sh deinstall
-   ./manage_odsee.sh deinstall
+    ./manage_oud.sh setup --pnum 1 -n inetorg 
+    ./manage_oud.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1444:1989
 
-### Example 15: Demonstrate how to setup an OUD instance that emulates AD instance
+   #### Setup replication gateway  
 
-#### Remove existing OUD instances
-./manage_oud.sh deinstall
+       ./manage_replgw.sh setup
 
-#### Copy make-ldif template and custom schema to config directory
-cp samples/ad.* /u01/cfg
+   #### Initialize OUD from ODSEE data  
+
+    ./manage_replgw.sh export  
+    ./manage_replgw.sh init  
+    ./manage_replgw.sh rstatus  
+    ./manage_replgw.sh test  
+
+   #### Remove replication gateway and ODSEE instances  
+
+    ./manage_replgw.sh deinstall  
+    ./manage_odsee.sh deinstall  
+
+### Example 15: Demonstrate how to setup an OUD instance that emulates AD instance  
+
+#### Remove existing OUD instances  
+
+    ./manage_oud.sh deinstall  
+
+#### Copy make-ldif template and custom schema to config directory  
+
+    cp samples/ad.* /u01/cfg  
 
 #### Generate AD data using the make-ldif template
-./manage_data.sh genall -n ad --dnfilter cn=user --rm
 
-#### Setup the OUD instance
-./manage_oud.sh setup -n ad --nobatch
+    ./manage_data.sh genall -n ad --dnfilter cn=user --rm  
 
-### Example 16: Demonstrate how to map uid to samAccountName
-#### Setup the OUD instance
-./manage_oud.sh deinstall
-./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname.batch
+#### Setup the OUD instance  
 
-#### Show that uid is returned with value of samAccountName but samAccountName is not returned
-/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName
-/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName
-/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName
+    ./manage_oud.sh setup -n ad --nobatch  
 
-### Example 17: Demonstrate how to map uid to samAccountName
-#### Setup the OUD instance
-./manage_oud.sh deinstall
-./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname_and_add_samAccountName.batch
+### Example 16: Demonstrate how to map uid to samAccountName  
 
-#### Show that uid and samAccountName are returned where uid has the value of samAccountName
-/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName
-/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName
-/u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName
+#### Setup the OUD instance  
 
-### Example 18: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade
-/u01/mw_oud14c/demo_oud14c_upgrade.sh existinghome
+    ./manage_oud.sh deinstall  
+    ./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname.batch  
 
-### Example 19: Demonstrate swing migration of OUD 12cPS4 to OUD 14c
-/u01/mw_oud14c/demo_oud14c_upgrade.sh swing
+#### Show that uid is returned with value of samAccountName but samAccountName is not returned  
 
-### Example 20: Demonstrate Oracle database name (net services/TNS/Onames) resolution
-./demo_tns.sh
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName  
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName  
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName  
+
+### Example 17: Demonstrate how to map uid to samAccountName  
+
+#### Setup the OUD instance  
+
+    ./manage_oud.sh deinstall  
+    ./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname_and_add_samAccountName.batch  
+
+#### Show that uid and samAccountName are returned where uid has the value of samAccountName  
+
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName  
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName  
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName  
+
+### Example 18: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade  
+
+    /u01/mw_oud14c/demo_oud14c_upgrade.sh existinghome  
+
+### Example 19: Demonstrate swing migration of OUD 12cPS4 to OUD 14c  
+
+    /u01/mw_oud14c/demo_oud14c_upgrade.sh swing
+
+### Example 20: Demonstrate Oracle database name (net services/TNS/Onames) resolution  
+
+    ./demo_tns.sh
 
 #### To grant access to the OUD ports for name resolution, OUD replication and administration, you will need to open the following ports for this demo  
-sudo firewall-cmd --permanent --zone=public --add-port=10444/tcp
-sudo firewall-cmd --permanent --zone=public --add-port=10389/tcp
-sudo firewall-cmd --permanent --zone=public --add-port=10636/tcp
-sudo firewall-cmd --permanent --zone=public --add-port=10989/tcp
-sudo firewall-cmd --reload
 
-#### To expand the TNS topology to another host
-./manage_tns.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989
+    sudo firewall-cmd --permanent --zone=public --add-port=10444/tcp
+    sudo firewall-cmd --permanent --zone=public --add-port=10389/tcp
+    sudo firewall-cmd --permanent --zone=public --add-port=10636/tcp
+    sudo firewall-cmd --permanent --zone=public --add-port=10989/tcp
+    sudo firewall-cmd --reload
 
-### Example 21: Demonstrate Enterprise User Security architecture
-./demo_eus.sh
+#### To expand the TNS topology to another host  
+
+    ./manage_tns.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989  
+
+### Example 21: Demonstrate Enterprise User Security architecture  
+
+    ./demo_eus.sh
 
 ## Security
 
