@@ -106,7 +106,7 @@ the respective demonstration script.  Here's the high level setup flow.
 
 7. Extract the OUD POC Kit into the base directory (/u01)
 
-       unzip -d /u01/. /u01/bits/oudpockit-*.zip  
+       unzip -d /u01/. /u01/bits/oudpockit.zip  
 
 
 
