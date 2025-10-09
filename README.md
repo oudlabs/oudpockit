@@ -270,10 +270,10 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 
 ### Example 12: Demonstrate backup/restore/export/import
 
-    ./manage_oud.sh backup --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')  
-    ./manage_oud.sh restore --backupdir /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S')  
-    ./manage_oud.sh export --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif  
-    ./manage_oud.sh import --ldiffile /u01/tmp/oud1-$(date +'%Y%m%d%H%M%S').ldif  
+    ./manage_oud.sh backup --backupdir /u01/tmp/oud1-backup  
+    ./manage_oud.sh restore --backupdir /u01/tmp/oud1-backup  
+    ./manage_oud.sh export --pnum 1 --nocompress --ldiffile /u01/tmp/oud1-export.ldif  
+    ./manage_oud.sh import --pnum 1 --nocompress --ldiffile /u01/tmp/oud1-export.ldif  
 
 ### Example 13: Setup SLAMD for load generation testing  
 
