@@ -372,8 +372,6 @@ Requisite: If installed on RedHat/Oracle Linux, the following packages are requi
 #### Show that uid is returned with value of samAccountName but samAccountName is not returned  
 
     /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName  
-    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName  
-    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName  
 
 ### Example 17: Demonstrate how to map uid to samAccountName  
 
