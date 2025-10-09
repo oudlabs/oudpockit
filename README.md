@@ -206,7 +206,7 @@ Note that setup of the OUDSM is not required to setup OUD instances.
 
 ### Example 5: Setup second OUD instance  
 
-    ./manage_oud.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1444  
+    ./manage_oud.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1444:1989  
 
 ### Show replication status of OUD topology  
 
