@@ -99,9 +99,12 @@ the respective demonstration script.  Here's the high level setup flow.
      * <https://updates.oracle.com/download/38015961.html> (p38015961_141200_Generic.zip)  
      * <https://updates.oracle.com/download/38032733.html> (p38032733_141210_Generic.zip)  
      * <https://updates.oracle.com/download/38130086.html> (p38130086_141200_Generic.zip)  
-   
 
-6. Extract the OUD POC Kit into the base directory (/u01)
+6. Download the OUD POC Kit and put into the bits directory (/u01/bits)
+
+       curl -Lso /u01/bits/oudpockit.zip https://github.com/oudlabs/oudpockit/raw/refs/heads/main/oudpockit.zip     
+
+7. Extract the OUD POC Kit into the base directory (/u01)
 
        unzip -d /u01/. /u01/bits/oudpockit-*.zip  
 
