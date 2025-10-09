@@ -257,12 +257,16 @@ Note that setup of the OUDSM is not required to setup OUD instances.
     ./demo_prepschema.sh --schema samples/das.schema  
 
 #### Prepare all schema files in a specific directory  
-
-    ./demo_prepschema.sh --schemadir /u01/var/ds1/config/schema  
+    
+    ./demo_prepschema.sh --schemadir samples/ds7schema  
 
 #### Prepare the schema from a source directory  
 
-    ./demo_prepschema.sh -h $(hostname -f) -p 2389
+    ./manage_data.sh genall -n ad -N 1 --rm --dnfilter cn=user  
+
+    ./manage_oud.sh setup --pnum 3 -n ad --schema samples/ad.schema
+
+    ./demo_prepschema.sh -h $(hostname -f) -p 3389
 
 ### Example 12: Demonstrate backup/restore/export/import
 
