@@ -373,12 +373,16 @@ Requisite: If installed on RedHat/Oracle Linux, the following packages are requi
 
     /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(cn=user1)' uid samAccountName  
 
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName  
+    /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName  
+
+
 ### Example 17: Demonstrate how to map uid to samAccountName  
 
 #### Setup the OUD instance  
 
     ./manage_oud.sh deinstall  
-    ./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname_and_add_samAccountName.batch  
+    ./manage_oud.sh setup --pnum 1 -n ad --schema samples/ad.schema --batch samples/map_uid2samaccountname_and_add_samAccountName.batch  
 
 #### Show that uid and samAccountName are returned where uid has the value of samAccountName  
 
