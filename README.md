@@ -181,49 +181,61 @@ Most scripts include usage that can be seen by running the script with the --hel
 For all of the following examples, the scripts are located in /u01 or whatever base directory that you specify for your host.  
 
 ### Example 1: Extract and install OUD
-./manage_install.sh install oud 
+
+     ./manage_install.sh install oud 
 
 ### Example 2: Setup administrative web service (OUDSM)
-Note that setup of the OUDSM is not required to setup OUD instances.
-./manage_oudsm.sh setup 
+Note that setup of the OUDSM is not required to setup OUD instances.  
 
-### Stop/Start OUDSM:
-    ./manage_oudsm.sh stop
-    ./manage_oudsm.sh start
+    ./manage_oudsm.sh setup  
 
-### Example 3: Generate 10,000 user entries
-./manage_data.sh genall -n enterprise -N 10000 
+### Stop/Start OUDSM:  
 
-### Example 4: Setup first OUD instance
-./manage_oud.sh setup --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --data /u01/cfg/enterprise.ldif 
+    ./manage_oudsm.sh stop  
+    ./manage_oudsm.sh start  
 
-### Example 5: Setup second OUD instance
-./manage_oud.sh setup --pnum 2 --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --supplier $(hostname -f):1444 
+### Example 3: Generate 10,000 user entries  
+    ./manage_data.sh genall -n enterprise -N 10000   
 
-### Show replication status of OUD topology
-./manage_oud.sh rstatus  [--advanced] [--disp <view>]
+### Example 4: Setup first OUD instance  
 
-### Stop/Start all OUD directory server instances on local host:
-    ./manage_oud.sh stop
-    ./manage_oud.sh start
+    ./manage_oud.sh setup --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --data /u01/cfg/enterprise.ldif  
 
-### Setup all OUD POC Kit services to restart on OS reboot
-    ./manage_init.sh enable
+### Example 5: Setup second OUD instance  
 
-### Example 6: Setup load balancing proxy
-./manage_proxy.sh setup -n enterprise --suffix "dc=example,dc=com" --nodes "$(hostname -f):1389:1636,$(hostname -f):2389:2636" 
+    ./manage_oud.sh setup --pnum 2 --suffix "dc=example,dc=com" --batch samples/my.batch --schema samples/my.schema --supplier $(hostname -f):1444  
 
-### Stop/Start OUD directory proxy server instances on local host:
-    ./manage_proxy.sh stop
-    ./manage_proxy.sh start
+### Show replication status of OUD topology  
 
-### Example 7: Demo LDAP Searches
-./demo_search.sh -n enterprise 
-./demo_search.sh -n enterprise -p 1390 
+    ./manage_oud.sh rstatus  [--advanced] [--disp <view>]  
 
-### Example 8: Demo REST/SCIM
-./demo_rest.sh -n enterprise 
-./demo_rest.sh -n enterprise -p 1433 
+### Stop/Start all OUD directory server instances on local host:  
+
+    ./manage_oud.sh stop  
+    ./manage_oud.sh start  
+
+### Setup all OUD POC Kit services to restart on OS reboot  
+
+    ./manage_init.sh enable  
+
+### Example 6: Setup load balancing proxy  
+
+    ./manage_proxy.sh setup -n enterprise --suffix "dc=example,dc=com" --nodes "$(hostname -f):1389:1636,$(hostname -f):2389:2636"  
+
+### Stop/Start OUD directory proxy server instances on local host:  
+
+    ./manage_proxy.sh stop  
+    ./manage_proxy.sh start  
+
+### Example 7: Demo LDAP Searches  
+
+    ./demo_search.sh -n enterprise  
+    ./demo_search.sh -n enterprise -p 1390  
+
+### Example 8: Demo REST/SCIM  
+
+    ./demo_rest.sh -n enterprise  
+    ./demo_rest.sh -n enterprise -p 1433  
 
 
 ### Example 9: Deinstall OUD proxy
