@@ -350,24 +350,24 @@ Requisite: If installed on RedHat/Oracle Linux, the following packages are requi
 
     ./manage_oud.sh deinstall  
 
-#### Copy make-ldif template and custom schema to config directory  
-
-    cp samples/ad.* /u01/cfg  
-
 #### Generate AD data using the make-ldif template
 
     ./manage_data.sh genall -n ad --dnfilter cn=user --rm  
 
 #### Setup the OUD instance  
 
-    ./manage_oud.sh setup -n ad --nobatch  
+    ./manage_oud.sh setup -n ad --pnum 1 --schema samples/ad.schema --nobatch  
+
+#### Show the samAccountName of a user entry  
+
+    ./demo_search.sh -n ad --pnum 1 -A samAccountName
 
 ### Example 16: Demonstrate how to map uid to samAccountName  
 
 #### Setup the OUD instance  
 
     ./manage_oud.sh deinstall  
-    ./manage_oud.sh setup --pnum 1 -n ad --batch samples/map_uid2samaccountname.batch  
+    ./manage_oud.sh setup --pnum 1 -n ad --schema samples/ad.schema --batch samples/map_uid2samaccountname.batch  
 
 #### Show that uid is returned with value of samAccountName but samAccountName is not returned  
 
