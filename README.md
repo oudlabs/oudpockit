@@ -125,299 +125,237 @@ the respective demonstration script.  Here's the high level setup flow.
           * V982063-01.zip - Oracle Database 19.3.0.0.0 for Linux x86-64 
 
 
-## Usage
+## Debugging
+All scripts can be run with the -z flag to reveal the underlying commands
+used by the scripts to help you derive your own scripting.  Most commands
+are followed by the return code in the form of rc=<some_number> on the 
+line following the command to be run.  Any return code value other than 0
+is problematic and should be investigated.
 
-NAME
-     manage_tns.sh [subcommand] -n \<alias\> --suffix \<suffix\> [options]
+## Log files
+All logs are directed to <kit_dir>/logs for your convenience.
 
-SUBCOMMANDS
+## Defaults
+### Default Suffix
+The default base suffix used throughout is dc=example,dc=com. However, you
+can specify an alternative suffix with --suffix "<suffix>" to most scripts.
 
-        register      Register a database
+### Default Template
+The default template used when generating data is the inetorg template. 
 
-        unregister    Unregister a database
+The template is specified with -n <template_name> when running most scripts.
 
-        show          Show the database TNS entry
+A template is composed of the following 4 files each of which start with the template name.
 
-        showcs        Show the database TNS entry connect string
+Type | Template file
+------------  | -------------
+Schema        | <kit_dir>/cfg/<template_name>.schema
+Batch         | <kit_dir>/cfg/<template_name>.batch
+MakeLDIF      | <kit_dir>/cfg/<template_name>.tmpl
+Data          | <kit_dir>/cfg/<template_name>.ldif
+DN List       | <kit_dir>/cfg/<template_name>.dn
+RDN List      | <kit_dir>/cfg/<template_name>.rdn
 
-        list          List all registered databases
+## File Structure
+The contents of the OUD POC Kit fall into the following categories:  
 
-        listcs        List all registered databases with connect string
+File/Directory | Description
+------------   | -------------
+POC_README.txt | README file for getting started with OUD POC Kit
+manage*.sh     | Scripts for managing software, instances, ... etc.
+demo*.sh       | Scripts for demonstrating specific use cases
+poc_vars       | Common variables used by OUD POC Kit
+[`cfg/`](cfg/) | OUD POC Kit configuration directory
+[`logs/`](logs/) | OUD POC Kit logs directory
+[`bits/`](bits/) | OUD POC Kit bits directory (where downloaded zip files go)
+[`sw/`](sw/) | OUD POC Kit extracted software directory
+[`tmp/`](tmp/) | OUD POC Kit temporary directory
+[`samples/`](samples/) | Sample files such as batch, MakeLdif, schema, ... etc.
 
-        listldif      List all registered databases in full LDIF format
+## Documentation
 
-        export        Export DS entries to a tnsnames.ora file
+Most scripts include usage that can be seen by running the script with the --help.
 
-        exportcman    Export DS entries to a tnsnames.ora file for CMAN setup
+## Use Cases
 
-        exportmsie    Export DS entries to a tnsnames.ora file for Microsoft Entra ID Integration (MSIE) aliases
+### Example 1: Extract and install OUD
+cd "${curdir}"
+./manage_install.sh install oud 
 
-        load          Load all entries from a tnsnames.ora file into DS
+### Example 2: Setup administrative web service (OUDSM)
+Note that setup of the OUDSM is not required to setup OUD instances.
+./manage_oudsm.sh setup 
 
-SYNOPSIS
+### Stop/Start OUDSM:
+    ./manage_oudsm.sh stop
+    ./manage_oudsm.sh start
 
-     Register database with default connect string
-        manage_tns.sh register -n <alias> --suffix <suffix>
+### Example 3: Generate 10,000 user entries
+./manage_data.sh genall -n enterprise -N 10000 
 
-     Register database with custom connect string
-        manage_tns.sh register -n <alias> --suffix <suffix> -c "<string>"
+### Example 4: Setup first OUD instance
+./manage_oud.sh setup --suffix "${suffix}" --batch ${samples}/my.batch --schema ${samples}/my.schema --data ${curdir}/cfg/enterprise.ldif 
 
-     Register database with Entra ID integration
-        manage_tns.sh register -n <alias> --suffix <suffix> --method interactive --tenantid <id> --clientid <id> --serveruri <uri>
+### Example 5: Setup second OUD instance
+./manage_oud.sh setup --pnum 2 --suffix "${suffix}" --batch ${samples}/my.batch --schema ${samples}/my.schema --supplier ${localHost}:1444 
 
-     Unregister database
-        manage_tns.sh unregister -n <alias> --suffix <suffix>
+### Show replication status of OUD topology
+./manage_oud.sh rstatus  [--advanced] [--disp <view>]
 
-     Show database entry
-        manage_tns.sh show -n <alias> --suffix <suffix>
+### Stop/Start all OUD directory server instances on local host:
+    ./manage_oud.sh stop
+    ./manage_oud.sh start
 
-     Show database entry with formatted connect string
-        manage_tns.sh show -n <alias> --suffix <suffix>
+### Setup all OUD POC Kit services to restart on OS reboot
+    ./manage_init.sh enable
 
-     List database entries
-        manage_tns.sh list --suffix <suffix>
+### Example 6: Setup load balancing proxy
+./manage_proxy.sh setup -n enterprise --suffix "${suffix}" --nodes "${localHost}:1389:1636,${localHost}:2389:2636" 
 
-     List database entries with connect string
-        manage_tns.sh listcs --suffix <suffix>
+### Stop/Start OUD directory proxy server instances on local host:
+    ./manage_proxy.sh stop
+    ./manage_proxy.sh start
 
-     List database entries in full LDIF format
-        manage_tns.sh listldif --suffix <suffix>
+### Example 7: Demo LDAP Searches
+./demo_search.sh -n enterprise 
+./demo_search.sh -n enterprise -p 1390 
 
-     Export all entries from the directory service to a tnsnames.ora file
-        manage_tns.sh export --suffix <suffix> -f <tnsnames_file>
+### Example 8: Demo REST/SCIM
+./demo_rest.sh -n enterprise 
+./demo_rest.sh -n enterprise -p 1433 
 
-     Export all entries from the directory service to a tnsnames.ora file
-     for use in Oracle Connection Manager proxy architecture where the
-     cman_host can be an un-qualified host, fully qualified host, or IP 
-     address of the actual host or a load balancer VIP. Note for TLS
-     connections, the certificate chain of the database clients will need
-     to be for the CMAN host, not the target database host.
-        manage_tns.sh exportcman --suffix <suffix> -chost <cman_host> -f <tnsnames_file>
 
-     Export all entries from the directory service to a tnsnames.ora where
-     entires that do not already contain MSIE properties are tagged with
-     <entry>_MSIE or whatever tag name that you specify with --tag <tag>.
-        manage_tns.sh exportmsie --suffix <suffix> -f <tnsnames_file> --tag <tag>
+### Example 9: Deinstall OUD proxy
+./manage_proxy.sh deinstall
 
-     Load all entries from a tnsnames.ora file into the directory service
-        manage_tns.sh load --suffix <suffix> -f <tnsnames_file>
+### Example 10: Demo bulk load CSV data into OUD
+./manage_csv2ldif.sh --overwrite --csvFile ${samples}/test.csv --suffix "ou=People,${suffix}" 
+./demo_bulkloadldif.sh --nodupcheck -f ${samples}/test.ldif -h ${localHost} -p 1389 -j ${curdir}/cfg/...pw 
 
+### Example 11: Prepare custom schema for OUD
+#### Prepare an individual schema file
+./demo_prepschema.sh --schema ${samples}/das.schema
 
+#### Prepare all schema files in a specific directory
+./demo_prepschema.sh --schemadir ${curdir}/var/ds1/config/schema
 
+#### Prepare the schema from a source directory
+./demo_prepschema.sh -h $(hostname -f) -p 2389
 
-OPTIONS
+### Example 12: Demonstrate backup/restore/export/import
+./manage_oud.sh backup --backupdir ${tmpdir}/oud${pnum}-${now}
+./manage_oud.sh restore --backupdir ${tmpdir}/oud${pnum}-${now}
+./manage_oud.sh export --ldiffile ${tmpdir}/oud${pnum}-${now}.ldif
+./manage_oud.sh import --ldiffile ${tmpdir}/oud${pnum}-${now}.ldif
 
-     The following options are supported:
+### Example 13: Setup SLAMD for load generation testing
+#### Setup SLAMD server, client, and client monitor
+./manage_slamd.sh setup slamd
 
-     -z                 Show debug output
+#### Create info file based on make-ldif template to inform the load generations DIT, user, group, and group membership spans
+./manage_slamd.sh mksvcinfo -n enterprise
 
-     -n <alias>         Database alias name
-                        Default: tns1
+#### Start a performance analysis baseline campaign
+./manage_slamd.sh brun --campaign baseline -h $(hostname -f) -p 1389 -C 3
 
-     --suffix <suffix>  Directory server naming context (a.k.a. base suffix)
+#### Check the status of running jobs
+./manage_slamd.sh blist
 
-     -s <svc_name>      Database service name
-                        Default: tns1
+#### Wait for a while for some data to be processed
+sleep 600
 
-     -c <string>        Custom connect string
+#### Generate reports of the completed jobs
+./manage_slamd.sh breports
 
-     -h <ds_host>       Directory server fully qualified host name
-                        Default: tns1.example.com
+#### Display the job results summary for the latest campaign
+./manage_slamd.sh bsummary
 
-     -p <ldaps_port>    Directory server secure (ldaps) port number
-                        Default: 10636
+### Example 14: Demonstrate ODSEE to OUD migration with OUD Replication Gateway
+Requisite: If installed on RedHat/Oracle Linux, the following packages are required for ODSEE:
+### Install RedHat/Oracle Linux 7 requisites  
 
-     -D <userdn>        Distinguished name of TNS admin user
-                        Default: cn=eusadmin,ou=EUSAdmins,cn=oracleContext
+    sudo -n yum install -y ksh unzip libzip libzip.i686 libgcc.i686 glibc-devel.i686 gcc gcc-c++ perl bc elfutils-libelf-devel glibc-devel libaio-devel libstdc++-devel libstdc++-devel libaio-devel sysstat binutils unixODBC unixODBC-devel compat-db47 compat-libcap1.x86_64 compat-libstdc++-33.x86_64 compat-libstdc++-33.i686 libstdc++.i686 compat-libcap1 compat-libstdc++-33
 
-     -j <pw_file>       Password file of TNS admin user
+   #### Install OUD and gen data
+   ./manage_data.sh genall -n inetorg --rm
 
-     -f <tns_file>      tnsnames.ora file
+   #### Setup ODSEE topology
+   ./manage_odsee.sh setup --pnum 1 -n inetorg
+   ./manage_odsee.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1393
+   ./manage_odsee.sh mod --pnum 1
 
-     --sid <SID>        ORACLE_SID
-                        Default: tns1
+   #### Setup OUD topology
+   ./manage_oud.sh setup --pnum 1 -n inetorg 
+   ./manage_oud.sh setup --pnum 2 -n inetorg --supplier $(hostname -f):1444:1989
 
-     --base <dir>       ORACLE_BASE
-                        Default: /u01/app/oracle/19c
+   #### Setup replication gateway
+   ./manage_replgw.sh setup
 
-     --home <dir>       ORACLE_HOME
-                        Default: /u01/app/oracle/19c/dbhome_1
-
-     --dbhost <host>    Fully qualified database host name 
-                        Default: tns1.example.com
+   #### Initialize OUD from ODSEE data
+   ./manage_replgw.sh export
+   ./manage_replgw.sh init
+   ./manage_replgw.sh rstatus
+   ./manage_replgw.sh test
 
-     --dbport <port>    Database port number
-                        Default: 1521
-
-     --subject <DN>      Certificate subject DN
-                        Default: tns1.example.com
-
-     --wallet <wallet>  Wallet location
-                        Default: SYSTEM
-
-     --dbproto <proto>  Protocol of TCP or TCPS
-                        Default: TCP
-
-     --svctype <type>   Service handler type
-                        Default: DEDICATED
-                        Options:
-                           DEDICATED to specify whether client requests be served by dedicated server
-                           SHARED to specify whether client request be served by shared server
-                           POOLED to get a connection from the connection pool if database resident 
-                             connection pooling is enabled on the server
-
-     --chost <host>     Connection Manager Host
-
-     --tag <name>       Tag for duplicate name service entries
-                        Default: MSIE
-
-
-Entra ID Integration Options
-
-     --method <method>  Authentication method
-                        Default: interactive
-                        Options:
-                           interactive - Browser to Entra ID login pops up locally
-                           passthrough - Entra ID login URL and token provided inline
-                                         to be opened and completed in separate browser
-                           service - Service account
-
-     --tenantid <id>    Entra ID tenant ID
-
-     --clientid <id>    Entra ID web app client ID of registered Oracle database client
-
-     --serveruri <uri>  Entra ID web app ID URI of registered Oracle database server
-
-
-## Examples
-
-**Example 1: Register a database**  
-$ /u01/manage_tns.sh register -n mydb --suffix "dc=example,dc=com"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory as cn=eusadmin,ou=EUSAdmins,cn=oracleContext  
-Enter directory service TNS admin user's password: *********  
-Register database mydb...success  
-
-
-**Example 2: Register a database that includes Entra ID integration configuration**  
-$ /u01/manage_tns.sh register -n mypdb --suffix "dc=example,dc=com" --method interactive --tenantid 7f4c6e3e-a1e0-43fe-14c5-c2f051a0a3a1 --clientid e5124a85-ac3e-14a4-f2ca-1ad635cf781a --serveruri "https://dbauthdemo.com/16736175-ca41-8f33-af0d-4616ade17621"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory as cn=eusadmin,ou=EUSAdmins,cn=oracleContext  
-Enter directory service TNS admin user's password: *********  
-Register database mypdb...success  
-
-
-**Example 3: List registered databases**  
-$ /u01/manage_tns.sh list --suffix "dc=example,dc=com"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory service anonymously  
-List registered databases  
-mydb
-mypdb
-
-**Example 4: Show specific registered database**  
-$ /u01/manage_tns.sh show -n mypdb --suffix "dc=example,dc=com"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory service anonymously  
-Show database mypdb  
-dn: cn=mypdb,cn=OracleContext,dc=example,dc=com  
-cn: mypdb  
-objectClass: orclApplicationEntity  
-objectClass: orclDBServer  
-objectClass: orclService  
-objectClass: top  
-objectClass: orclDBServer_92  
-orclDBGlobalName: mypdb  
-orclNetDescName: 000:cn=DESCRIPTION_0  
-orclNetDescString: (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=tns1.example.com)(PORT=1521))(SECURITY=(SSL_SERVER_DN_MATCH=TRUE)(WALLET_LOCATION=SYSTEM)(TOKEN_AUTH=AZURE_INTERACTIVE)(TENANT_ID=7f4c6e3e-a1e0-43fe-14c5-c2f051a0a3a1)(AZURE_DB_APP_ID_URI=https://dbauthdemo.com/16736175-ca41-8f33-af0d-4616ade17621)(CLIENT_ID=e5124a85-ac3e-14a4-f2ca-1ad635cf781a))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=mypdb)))  
-orclOracleHome: /dbhome_1  
-orclServiceType: DB  
-orclSid: mypdb  
-orclSystemName: tns1.example.com  
-orclVersion: 121000  
-
-**Example 5: Un-register a database**  
-$ /u01/manage_tns.sh unregister -n mydb --suffix "dc=example,dc=com"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory as cn=eusadmin,ou=EUSAdmins,cn=oracleContext  
-Enter directory service TNS admin user's password: *********  
-Unregister database mydb...success  
-
-**Example 6: List registered databases**  
-$ /u01/manage_tns.sh list --suffix "dc=example,dc=com"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory service anonymously  
-List registered databases
-mydb1  
-  
-**Example 7: Register database with TCPS**  
-$ /u01/manage_tns.sh register -n pdb3 --suffix "dc=example,dc=com" --dbhost pdb3.example.com --dbport 2484 --dbproto TCPS -s pdb3.example.com  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory as cn=eusadmin,ou=EUSAdmins,cn=oracleContext  
-Enter directory service TNS admin user's password: *********  
-Register database pdb3...success  
-  
-**Example 8: Show database pdb3**  
-$ /u01/manage_tns.sh show -n pdb3 --suffix "dc=example,dc=com"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory service anonymously  
-Show database pdb3  
-dn: cn=pdb3,cn=OracleContext,dc=example,dc=com  
-cn: pdb3  
-objectClass: orclApplicationEntity  
-objectClass: orclDBServer  
-objectClass: orclService  
-objectClass: top  
-objectClass: orclDBServer_92  
-orclDBGlobalName: pdb3  
-orclNetDescName: 000:cn=DESCRIPTION_0  
-orclNetDescString: (DESCRIPTION=(ADDRESS=(PROTOCOL=TCPS)(HOST=pdb3.example.com)(PORT=2484))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=pdb3.example.com)))  
-orclOracleHome: /dbhome_1  
-orclServiceType: DB  
-orclSid: pdb3  
-orclSystemName: pdb3.example.com  
-orclVersion: 121000  
-  
-**Example 9: Register database with custom connect string**  
-$ /u01/manage_tns.sh register -n pdb4 --suffix "dc=example,dc=com" -c "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCPS)(HOST=pdb4.example.com)(PORT=2484))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=pdb4.example.com)))"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory as cn=eusadmin,ou=EUSAdmins,cn=oracleContext  
-Enter directory service TNS admin user's password: *********  
-Register database pdb4...success  
-  
-**Example 10: Export databases into tnsnames.ora file with _MSIE tag supplemented with MSIE properties**  
-$ /u01/manage_tns.sh exportmsie -f tnsnames-msie.ora --suffix "DC=example,DC=com" --dbport 2484 --method interactive --tenantid 7f4c6e3e-a1e0-43fe-14c5-c2f051a0a3a1 --clientid e5124a85-ac3e-14a4-f2ca-1ad635cf781a --serveruri "https://dbauthdemo.com/16736175-ca41-8f33-af0d-4616ade17621"  
-Directory Server: ldaps://tns1.example.com:10636  
-User: Loging into directory service anonymously  
-Exporting MYDB1_MSIE...done  
-Exporting MYPDB1_TNS1_MSIE...done  
-Exporting mytestdb_MSIE...done  
-Exporting mypdb_MSIE...done  
-Exporting PDB3_MSIE...done  
-Exporting PDB4_MSIE...done  
-Export to tnsnames-msie.ora complete  
-
-$ head -13 tnsnames-msie.ora  
-MYDB1_MSIE=  
-   (DESCRIPTION=  
-         (ADDRESS=(PROTOCOL=TCPS)(HOST=tns1.example.com)(PORT=2484))  
-         (SECURITY=  
-            (SSL_SERVER_DN_MATCH=TRUE)  
-            (WALLET_LOCATION=SYSTEM)  
-            (TOKEN_AUTH=AZURE_INTERACTIVE)  
-            (TENANT_ID=7f4c6e3e-a1e0-43fe-14c5-c2f051a0a3a1)  
-            (CLIENT_ID=e5124a85-ac3e-14a4-f2ca-1ad635cf781a)  
-            (AZURE_DB_APP_ID_URI=https://dbauthdemo.com/16736175-ca41-8f33-af0d-4616ade17621))  
-      (CONNECT_DATA=  
-         (SERVICE_NAME=mydb1)))  
-  
-$ head -5 tnsnames.ora  
-mydb1=  
-   (DESCRIPTION=  
-         (ADDRESS=(PROTOCOL=TCP)(HOST=tns1.example.com)(PORT=1521))  
-      (CONNECT_DATA=  
-         (SERVICE_NAME=mydb1)))  
+   #### Remove replication gateway and ODSEE instances
+   ./manage_replgw.sh deinstall
+   ./manage_odsee.sh deinstall
 
+### Example 15: Demonstrate how to setup an OUD instance that emulates AD instance
+
+#### Remove existing OUD instances
+./manage_oud.sh deinstall
+
+#### Copy make-ldif template and custom schema to config directory
+cp ${samples}/ad.* ${cfgdir}
+
+#### Generate AD data using the make-ldif template
+./manage_data.sh genall -n ad --dnfilter cn=user --rm
+
+#### Setup the OUD instance
+./manage_oud.sh setup -n ad --nobatch
+
+### Example 16: Demonstrate how to map uid to samAccountName
+#### Setup the OUD instance
+./manage_oud.sh deinstall
+./manage_oud.sh setup --pnum 1 -n ad --batch ${samples}/map_uid2samaccountname.batch
+
+#### Show that uid is returned with value of samAccountName but samAccountName is not returned
+${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(cn=user1)' uid samAccountName
+${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(uid=user1)' uid samAccountName
+${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(samAccountName=user1)' uid samAccountName
+
+### Example 17: Demonstrate how to map uid to samAccountName
+#### Setup the OUD instance
+./manage_oud.sh deinstall
+./manage_oud.sh setup --pnum 1 -n ad --batch ${samples}/map_uid2samaccountname_and_add_samAccountName.batch
+
+#### Show that uid and samAccountName are returned where uid has the value of samAccountName
+${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(cn=user1)' uid samAccountName
+${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(uid=user1)' uid samAccountName
+${oudmwdir}/oud1/OUD/bin/ldapsearch -h ${localHost} -Z -X -p ${ldapsPort} -D "${bDN}" -j "${jPW}" -b "cn=Users,${suffix}" -s sub '(samAccountName=user1)' uid samAccountName
+
+### Example 18: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade
+${oudmwdir}/demo_oud14c_upgrade.sh existinghome
+
+### Example 19: Demonstrate swing migration of OUD 12cPS4 to OUD 14c
+${oudmwdir}/demo_oud14c_upgrade.sh swing
+
+### Example 20: Demonstrate Oracle database name (net services/TNS/Onames) resolution
+./demo_tns.sh
+
+#### To grant access to the OUD ports for name resolution, OUD replication and administration, you will need to open the following ports for this demo  
+sudo firewall-cmd --permanent --zone=public --add-port=10444/tcp
+sudo firewall-cmd --permanent --zone=public --add-port=10389/tcp
+sudo firewall-cmd --permanent --zone=public --add-port=10636/tcp
+sudo firewall-cmd --permanent --zone=public --add-port=10989/tcp
+sudo firewall-cmd --reload
+
+#### To expand the TNS topology to another host
+#./manage_tns.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989
+
+### Example 21: Demonstrate Enterprise User Security architecture
+./demo_eus.sh
 
 ## Security
 
@@ -435,129 +373,4 @@ Copyright (c) 2023 Oracle and/or its affiliates.
 
 Released under the Universal Permissive License v1.0 as shown at
 <https://oss.oracle.com/licenses/upl/>.
-
-
-# OUD POC Kit
-The Oracle Unified Directory (OUD) Proof of Concept (POC) kit is intended
-to streamline OUD evaluations, proofs of concept and learning about OUD.
-
-The OUD POC Kit is NOT intended for production use though it has been
-used by some customers for that purpose. Note that you should remove the
-temporary password file (<kit_dir>/cfg/...pw) when not in use.
-
-### Debugging
-All scripts can be run with the -z flag to reveal the underlying commands
-used by the scripts to help you derive your own scripting.  Most commands
-are followed by the return code in the form of rc=<some_number> on the 
-line following the command to be run.  Any return code value other than 0
-is problematic and should be investigated.
-
-### Log files
-All logs are directed to <kit_dir>/logs for your convenience.
-
-### Defaults
-#### Default Suffix
-The default base suffix used throughout is dc=example,dc=com. However, you
-can specify an alternative suffix with --suffix "<suffix>" to most scripts.
-
-#### Default Template
-The default template used when generating data is the inetorg template. 
-
-The template is specified with -n <template_name> when running most scripts.
-
-A template is composed of 4 files 
-A template is a set of files that begin with the template name as follows:
-
-Type | Template file
-------------  | -------------
-Schema        | <kit_dir>/cfg/<template_name>.schema
-Batch         | <kit_dir>/cfg/<template_name>.batch
-Compatibility | <kit_dir>/cfg/<template_name>.compat
-MakeLDIF      | <kit_dir>/cfg/<template_name>.tmpl
-Data          | <kit_dir>/cfg/<template_name>.ldif
-
-to serve as an example for how to install and setup OUD instances in order to
-evaluate OUD features and functionality. The following workflow will
-introduce the core capabilities using the following default configuration:
-Suffix: dc=example,dc=com
-Users: N users with RDN uid=user<N> in ou=People,dc=example,dc=com
-Groups:
-
-
-## License
-
-Copyright (c) 2019, 2023 Oracle and/or its affiliates.
-
-The OUD POC Kit is open source and distributed under Universal Permissive License v1.0 as shown at
-<https://oss.oracle.com/licenses/upl/>.
-
-## Getting started with OUD POC Kit
-
-### Download Oracle Linux
-
-1. JDK 1.8
-    1. Go to the JDK 8 download page at 
-        https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-    2. Download the tar version of the jdk-8u361-linux-x64.tar.gz
-
-2. Download Oracle Unified Directory (OUD) and Fusion Middleware
-   Infrastructure (FMW)
-    1. Go to https://eDelivery.oracle.com
-    2. Login
-    3. Search on “Oracle Fusion Middleware 12c Infrastructure”
-    4. Add “Oracle Fusion Middleware 12c Infrastructure 12.2.1.4.0” to
-       cart
-    5. Search on Oracle Directory Services Plus
-    6. Add "Oracle Directory Services Plus 12.2.1.4.0 ( Oracle Directory
-        Services Plus )” to cart
-    7. Click on “Checkout”
-    8. Select Platform for OUD and FMW 12c
-    9. Click “Next”
-    10. Click on the following two ZIP files to download respective
-        software:
-        - V983368-01.zip - Oracle Fusion Middleware 12c (12.2.1.4.0)
-             Infrastructure
-        - V983402-01.zip - Oracle Fusion Middleware 12c (12.2.1.4.0)
-             Unified Directory
-3. [Optional for EUS Demo] Oracle Database 19c
-    1. Go to https://eDelivery.oracle.com
-    2. Login
-    3. Search on “Oracle Database Enterprise Edition”
-    4. Add “DLP:Oracle Database Enterprise Edition 19.3.0.0.0” to cart
-    5. Click on “Checkout”
-    6. Select Platform
-    7. Click “Next”
-    8. Click on the following ZIP file to download:
-        - V982063-01.zip - Oracle Database 19.3.0.0.0 for Linux x86-64
-
-## Repository Structure
-
-This source repository is the main repository for GraalVM and includes the following components:
-
-File/Directory | Description
-------------   | -------------
-POC_README.txt | README file for getting started with OUD POC Kit
-manage*.sh     | Scripts for managing software, instances, ... etc.
-demo*.sh       | Scripts for demonstrating specific use cases
-poc_vars       | Common variables used by OUD POC Kit
-[`cfg/`](cfg/) | OUD POC Kit configuration directory
-[`logs/`](logs/) | OUD POC Kit logs directory
-[`bits/`](bits/) | OUD POC Kit bits directory (where downloaded zip files go)
-[`sw/`](sw/) | OUD POC Kit extracted software directory
-[`tmp/`](tmp/) | OUD POC Kit temporary directory
-[`samples/`](samples/) | Sample files such as batch, MakeLdif, schema, ... etc.
-[`samples/OandM`](samples/OandM) | Log sources, log parsers, and dashboards for OCI Observability & Management
-[`samples/kubernetes`](samples/kubernetes) | Kubernetes examples
-
-## Documentation
-
-Most scripts include usage. Run the script with --help argument to see usage.
-
-Many common use cases are documented in [`USE_CASES`](USE_CASES.md)
-
-## Get Support
-
-This OUD POC Kit is not supported by Oracle.
-
-However, you can submit bugs, questions, or requests for enhancements at [GitHub issue][issues].
 
