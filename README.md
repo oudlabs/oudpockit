@@ -311,6 +311,8 @@ Note also that Fusion Middleware patch 37376076 is required for OUDSM to work.
 
 Requisite: If installed on RedHat/Oracle Linux, the following packages are required for ODSEE:  
 
+Note that the a semilar demonstration is incoporated into the demo script demo_dsee2oud.sh.
+
 ### Install RedHat/Oracle Linux 7 requisites  
 
     sudo -n yum install -y ksh unzip libzip libzip.i686 libgcc.i686 glibc-devel.i686 gcc gcc-c++ perl bc elfutils-libelf-devel glibc-devel libaio-devel libstdc++-devel libstdc++-devel libaio-devel sysstat binutils unixODBC unixODBC-devel compat-db47 compat-libcap1.x86_64 compat-libstdc++-33.x86_64 compat-libstdc++-33.i686 libstdc++.i686 compat-libcap1 compat-libstdc++-33
@@ -347,6 +349,8 @@ Requisite: If installed on RedHat/Oracle Linux, the following packages are requi
     ./manage_odsee.sh deinstall  
 
 ### Example 15: Demonstrate how to setup an OUD instance that emulates AD instance  
+
+Note that the a semilar demonstration is incoporated into the demo script demo_emulate_ad.sh.
 
 #### Remove existing OUD instances  
 
