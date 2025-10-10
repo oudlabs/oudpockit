@@ -189,6 +189,7 @@ For all of the following examples, the scripts are located in /u01 or whatever b
 
 ### Example 2: Setup administrative web service (OUDSM)
 Note that setup of the OUDSM is not required to setup OUD instances.  
+Note also that Fusion Middleware patch 37376076 is required for OUDSM to work.
 
     ./manage_oudsm.sh setup  
 
@@ -410,7 +411,6 @@ Put JDK 21, OUD 14c and OUD 14c patches in /u01/bits/14c
 
     jdk-21_linux-x64_bin.tar.gz  
     V1048467-01.zip  
-    p37376076_141200_Generic.zip  
     p38015961_141200_Generic.zip  
     p38032733_141210_Generic.zip  
     p38130086_141200_Generic.zip  
