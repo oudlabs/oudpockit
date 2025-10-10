@@ -125,7 +125,8 @@ the respective demonstration script.  Here's the high level setup flow.
    f. Click on checkbox next to and select Linux x86-64 platform of the following and click "Continue"  
 
    g. Click on the following ZIP file to download respective software:  
-          * V982063-01.zip - Oracle Database 19.3.0.0.0 for Linux x86-64 
+
+ * V982063-01.zip - Oracle Database 19.3.0.0.0 for Linux x86-64 
 
 
 ## Debugging
@@ -434,7 +435,7 @@ Then, run the following demo:
 
 #### To expand the TNS topology to another host  
 
-    ./manage_tns.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989  
+    ./manage_ens.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989  
 
 ### Example 21: Demonstrate Enterprise User Security architecture  
 
