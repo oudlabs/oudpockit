@@ -401,7 +401,19 @@ Deinstall all existing instances and remove bits from /u01/bits
 
 Put JDK 1.8, OUD 12cPS4 and OUD 12c patches in /u01/bits/12c  
 
+    jdk-8u421-linux-x64.tar.gz  
+    V983402-01.zip  
+    p28186730_1394215_Generic.zip  
+    p38080574_122140_Generic.zip  
+
 Put JDK 21, OUD 14c and OUD 14c patches in /u01/bits/14c  
+
+    jdk-21_linux-x64_bin.tar.gz  
+    V1048467-01.zip  
+    p37376076_141200_Generic.zip  
+    p38015961_141200_Generic.zip  
+    p38032733_141210_Generic.zip  
+    p38130086_141200_Generic.zip  
 
 Then, run the following demo:  
 
