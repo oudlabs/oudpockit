@@ -451,17 +451,27 @@ Then, run the following demo:
 
 ### Example 23: Analyze roles in the Oracle database for EUS  
 
-    ./demo_analyze_dbroles.sh
+    . ./cfg/db19c.env
+    ./demo_analyze_dbroles.sh all
 
 ### Example 24: Demonstrate converting a CSV file to an LDIF file  
 
     ./manage_csv2ldif.sh --csvFile samples/test.csv --suffix "dc=example,dc=com"
 
-### Example 25: Track changes in an OUD instance changelog over time  
+### Example 25: Track changes and provide change notifications in an OUD instance changelog over time  
+
+Setup an OUD instance:  
 
     ./manage_data.sh genall -n inetorg -N 10000 --rm  
     ./manage_oud.sh setup --pnum 1 -n inetorg  
+
+Track changes in the changelog:  
+
     ./demo_track_cl.sh  
+
+Publish notifications per change: 
+
+    ./demo_change_notification.sh
 
 From another terminal, apply small write load to see changelog output with:
 
@@ -476,6 +486,15 @@ From another terminal, apply small write load to see changelog output with:
 Reference: <https://ltb-project.org/documentation/white-pages.html>
 
     ./demo_whitepages.sh
+
+### Example 28: Demonstrate assured read replication  
+
+   ./manage_data.sh genall -n inetorg -N 10000 --rm
+   ./demo_assuredread.sh
+
+### Example 29: Run a local baseline performance test of an OUD instance   
+
+   ./demo_baseline_local.sh
 
 ## Security
 
