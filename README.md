@@ -445,6 +445,38 @@ Then, run the following demo:
 
     ./demo_eus.sh
 
+### Example 22: Demonstrate Enterprise User Security architecture  
+
+    ./demo_eus.sh
+
+### Example 23: Analyze roles in the Oracle database for EUS  
+
+    ./demo_analyze_dbroles.sh
+
+### Example 24: Demonstrate converting a CSV file to an LDIF file  
+
+    ./manage_csv2ldif.sh --csvFile samples/test.csv --suffix "dc=example,dc=com"
+
+### Example 25: Track changes in an OUD instance changelog over time  
+
+    ./manage_data.sh genall -n inetorg -N 10000 --rm  
+    ./manage_oud.sh setup --pnum 1 -n inetorg  
+    ./demo_track_cl.sh  
+
+From another terminal, apply small write load to see changelog output with:
+
+    ./manage_slamd.sh modrate -M 1
+
+### Example 26: Demonstrate locking and unlocking a user  
+
+    ./demo_lock_unlock_user.sh
+
+### Example 27: Demonstrate LDAP Toolbox white pages with OUD  
+
+Reference: <https://ltb-project.org/documentation/white-pages.html>
+
+    ./demo_whitepages.sh
+
 ## Security
 
 Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
