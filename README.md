@@ -396,6 +396,7 @@ Deinstall all existing instances and remove bits from /u01/bits
 
     cd /u01  
     mv bits bits.orig  
+    mv sw sw.orig
     mkdir -p bits/12c bits/14c  
 
 Put JDK 1.8, OUD 12cPS4 and OUD 12c patches in /u01/bits/12c  
