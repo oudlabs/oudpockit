@@ -435,7 +435,7 @@ Then, run the following demo:
 
 #### To expand the TNS topology to another host  
 
-    ./manage_ens.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989  
+    ./manage_eus.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989  
 
 ### Example 21: Demonstrate Enterprise User Security architecture  
 
