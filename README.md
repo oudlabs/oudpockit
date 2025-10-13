@@ -500,10 +500,6 @@ Reference: <https://ltb-project.org/documentation/white-pages.html>
 
    ./demo_multiforest_proxy.sh
 
-### Example 31: Demonstrate updating self-signed cert with CA signed cert   
-
-   ./demo_update_oud_certs.sh
-
 ## Security
 
 Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
