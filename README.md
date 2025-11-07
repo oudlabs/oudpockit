@@ -247,12 +247,19 @@ Note also that Fusion Middleware patch 37376076 is required for OUDSM to work.
 
     ./manage_proxy.sh deinstall  
 
-### Example 10: Demo bulk load CSV data into OUD  
+### Example 10: Create a CSV file from an LDIF file
+
+     ./demo_ldif2csv.sh --ldif /u01/cfg/inetorg.ldif --oc inetorgperson
+
+### Example 11: Demonstrate converting a CSV file to an LDIF file  
 
     ./manage_csv2ldif.sh --overwrite --csvFile samples/test.csv --suffix "ou=People,dc=example,dc=com"  
+
+### Example 12: Demo bulk load LDIF data into OUD  
+
     ./demo_bulkloadldif.sh --nodupcheck -f samples/test.ldif -h $(hostname -f) -p 1389 -j /u01/cfg/...pw  
 
-### Example 11: Prepare custom schema for OUD  
+### Example 13: Prepare custom schema for OUD  
 
 #### Prepare an individual schema file  
 
@@ -270,14 +277,14 @@ Note also that Fusion Middleware patch 37376076 is required for OUDSM to work.
 
     ./demo_prepschema.sh -h $(hostname -f) -p 3389
 
-### Example 12: Demonstrate backup/restore/export/import
+### Example 14: Demonstrate backup/restore/export/import
 
     ./manage_oud.sh backup --backupdir /u01/tmp/oud1-backup  
     ./manage_oud.sh restore --backupdir /u01/tmp/oud1-backup  
     ./manage_oud.sh export --pnum 1 --nocompress --ldiffile /u01/tmp/oud1-export.ldif  
     ./manage_oud.sh import --pnum 1 --nocompress --ldiffile /u01/tmp/oud1-export.ldif  
 
-### Example 13: Setup SLAMD for load generation testing  
+### Example 15: Setup SLAMD for load generation testing  
 
 #### Setup SLAMD server, client, and client monitor  
 
@@ -307,7 +314,7 @@ Note also that Fusion Middleware patch 37376076 is required for OUDSM to work.
 
     ./manage_slamd.sh bsummary
 
-### Example 14: Demonstrate ODSEE to OUD migration with OUD Replication Gateway  
+### Example 16: Demonstrate ODSEE to OUD migration with OUD Replication Gateway  
 
 Requisite: If installed on RedHat/Oracle Linux, the following packages are required for ODSEE:  
 
@@ -348,7 +355,7 @@ Note that the a semilar demonstration is incoporated into the demo script demo_d
     ./manage_replgw.sh deinstall  
     ./manage_odsee.sh deinstall  
 
-### Example 15: Demonstrate how to setup an OUD instance that emulates AD instance  
+### Example 17: Demonstrate how to setup an OUD instance that emulates AD instance  
 
 Note that the a semilar demonstration is incoporated into the demo script demo_emulate_ad.sh.
 
@@ -368,7 +375,7 @@ Note that the a semilar demonstration is incoporated into the demo script demo_e
 
     ./demo_search.sh -n ad --pnum 1 -A samAccountName
 
-### Example 16: Demonstrate how to map uid to samAccountName  
+### Example 18: Demonstrate how to map uid to samAccountName  
 
 #### Setup the OUD instance  
 
@@ -383,7 +390,7 @@ Note that the a semilar demonstration is incoporated into the demo script demo_e
     /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName  
 
 
-### Example 17: Demonstrate how to map uid to samAccountName  
+### Example 19: Demonstrate how to map uid to samAccountName  
 
 #### Setup the OUD instance  
 
@@ -396,7 +403,7 @@ Note that the a semilar demonstration is incoporated into the demo script demo_e
     /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(uid=user1)' uid samAccountName  
     /u01/mw_oud14c/oud1/OUD/bin/ldapsearch -h $(hostname -f) -Z -X -p 1636 -D "cn=Directory Manager" -j "/u01/cfg/...pw" -b "cn=Users,dc=example,dc=com" -s sub '(samAccountName=user1)' uid samAccountName  
 
-### Example 18: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade  
+### Example 20: Demonstrate in place OUD 12cPS4 to OUD 14c upgrade  
 
 Deinstall all existing instances and remove bits from /u01/bits  
 
@@ -421,11 +428,11 @@ Then, run the following demo:
 
     ./demo_oud14c_upgrade.sh existinghome  
 
-### Example 19: Demonstrate swing migration of OUD 12cPS4 to OUD 14c  
+### Example 21: Demonstrate swing migration of OUD 12cPS4 to OUD 14c  
 
     /u01/mw_oud14c/demo_oud14c_upgrade.sh swing
 
-### Example 20: Demonstrate Oracle database name (net services/TNS/Onames) resolution  
+### Example 22: Demonstrate Oracle database name (net services/TNS/Onames) resolution  
 
     ./demo_tns.sh
 
@@ -441,24 +448,20 @@ Then, run the following demo:
 
     ./manage_eus.sh expand --pnum 20 --supplier <first_host_fqdn>:10444:10989  
 
-### Example 21: Demonstrate Enterprise User Security architecture  
+### Example 23: Demonstrate Enterprise User Security architecture  
 
     ./demo_eus.sh
 
-### Example 22: Demonstrate Enterprise User Security architecture  
+### Example 24: Demonstrate Enterprise User Security architecture  
 
     ./demo_eus.sh
 
-### Example 23: Analyze roles in the Oracle database for EUS  
+### Example 25: Analyze roles in the Oracle database for EUS  
 
     . ./cfg/db19c.env
     ./demo_analyze_dbroles.sh all
 
-### Example 24: Demonstrate converting a CSV file to an LDIF file  
-
-    ./manage_csv2ldif.sh --csvFile samples/test.csv --suffix "dc=example,dc=com"
-
-### Example 25: Track changes and provide change notifications in an OUD instance changelog over time  
+### Example 26: Track changes and provide change notifications in an OUD instance changelog over time  
 
 Setup an OUD instance:  
 
@@ -477,26 +480,26 @@ From another terminal, apply small write load to see changelog output with:
 
     ./manage_slamd.sh modrate -M 1
 
-### Example 26: Demonstrate locking and unlocking a user  
+### Example 27: Demonstrate locking and unlocking a user  
 
     ./demo_lock_unlock_user.sh
 
-### Example 27: Demonstrate LDAP Toolbox white pages with OUD  
+### Example 28: Demonstrate LDAP Toolbox white pages with OUD  
 
 Reference: <https://ltb-project.org/documentation/white-pages.html>
 
     ./demo_whitepages.sh
 
-### Example 28: Demonstrate assured read replication  
+### Example 29: Demonstrate assured read replication  
 
    ./manage_data.sh genall -n inetorg -N 10000 --rm
    ./demo_assuredread.sh
 
-### Example 29: Run a local baseline performance test of an OUD instance   
+### Example 30: Run a local baseline performance test of an OUD instance   
 
    ./demo_baseline_local.sh
 
-### Example 30: Demonstrate bringing together through OUD multiple AD forests   
+### Example 31: Demonstrate bringing together through OUD multiple AD forests   
 
    ./demo_multiforest_proxy.sh
 
