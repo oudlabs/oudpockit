@@ -35,7 +35,7 @@ The following sample invocation shows how to launch a compute instance named nod
 
     manage_oci.sh launch --name node1 --compartment <ocid> --region us-phoenix-1 --pubip --role ds --ad uYkY:PHX-AD-1 --subnet <ocid> --arch amd-e5 --cores 1 --mem 32 --storage 200 --os ol9 --base /u01  
 
-OS Versions supported via --os <version>: Oracle Linux 7 (ol7), 8 (ol8), 9 (ol9) and 10 (ol10).
+OS Versions supported via --os \<version\>: Oracle Linux 7 (ol7), 8 (ol8), 9 (ol9) and 10 (ol10).
 
 The following sample invocation terminates the previously created compute instance named node 1:
 
