@@ -454,16 +454,12 @@ Then, run the following demo:
 
     ./demo_eus.sh
 
-### Example 24: Demonstrate Enterprise User Security architecture  
-
-    ./demo_eus.sh
-
-### Example 25: Analyze roles in the Oracle database for EUS  
+### Example 24: Analyze roles in the Oracle database for EUS  
 
     . ./cfg/db19c.env
     ./demo_analyze_dbroles.sh all
 
-### Example 26: Track changes and provide change notifications in an OUD instance changelog over time  
+### Example 25: Track changes and provide change notifications in an OUD instance changelog over time  
 
 Setup an OUD instance:  
 
@@ -482,26 +478,26 @@ From another terminal, apply small write load to see changelog output with:
 
     ./manage_slamd.sh modrate -M 1
 
-### Example 27: Demonstrate locking and unlocking a user  
+### Example 26: Demonstrate locking and unlocking a user  
 
     ./demo_lock_unlock_user.sh
 
-### Example 28: Demonstrate LDAP Toolbox white pages with OUD  
+### Example 27: Demonstrate LDAP Toolbox white pages with OUD  
 
 Reference: <https://ltb-project.org/documentation/white-pages.html>
 
     ./demo_whitepages.sh
 
-### Example 29: Demonstrate assured read replication  
+### Example 28: Demonstrate assured read replication  
 
    ./manage_data.sh genall -n inetorg -N 10000 --rm
    ./demo_assuredread.sh
 
-### Example 30: Run a local baseline performance test of an OUD instance   
+### Example 29: Run a local baseline performance test of an OUD instance   
 
    ./demo_baseline_local.sh
 
-### Example 31: Demonstrate bringing together through OUD multiple AD forests   
+### Example 30: Demonstrate bringing together through OUD multiple AD forests   
 
    ./demo_multiforest_proxy.sh
 
